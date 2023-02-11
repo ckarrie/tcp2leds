@@ -13,8 +13,11 @@ python3 pv.py --shift 30 192.168.178.100
 SUN_LEDS = 50
 UPDATE_SECONDS = 1
 HOMEASSISTANT_URL = "http://192.168.178.203:8123"
+
+# set here your token or use token.txt
 HOMEASSISTANT_LONGTIME_TOKEN = ""
 
+# if you have set your token above, comment out the next 7 lines
 if os.path.exists("token.txt"):
     f = open("token.txt", "r")
     HOMEASSISTANT_LONGTIME_TOKEN = f.readline().replace('\n', '').replace('\r', '')
