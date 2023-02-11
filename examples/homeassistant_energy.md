@@ -1,6 +1,6 @@
 # Usage
 
-- get a longtime token from your HomeAssistant (http://<HomeAssistant IP>:8123/profile)
+- get a longtime token from your HomeAssistant (http://HomeAssistantIP:8123/profile)
 - save your longtime token in a file called `token.txt` and place the file in the same folder as the `homeassistant_energy.py` file
 - open `homeassistant_energy.py` with an editor
   - set your correct entities (grid I/O, battery I/O, solar, battery soc and your home consumption in `HOMEASSISTANT_ENTITIES`
