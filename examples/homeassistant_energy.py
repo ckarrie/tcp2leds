@@ -2,6 +2,7 @@ import requests
 import time
 import socket
 import argparse
+import os
 
 """
 Run with
@@ -12,7 +13,16 @@ python3 pv.py --shift 30 192.168.178.100
 SUN_LEDS = 50
 UPDATE_SECONDS = 1
 HOMEASSISTANT_URL = "http://192.168.178.203:8123"
-HOMEASSISTANT_LONGTIME_TOKEN = "<YOUR LONGTIME TOKE FROM HOMEASSISTANT>"
+HOMEASSISTANT_LONGTIME_TOKEN = ""
+
+if os.path.exists("token.txt"):
+    f = open("token.txt", "r")
+    HOMEASSISTANT_LONGTIME_TOKEN = f.readline().replace('\n', '').replace('\r', '')
+    print("Loaded token", HOMEASSISTANT_LONGTIME_TOKEN[0:10], "...")
+else:
+    print("Missing `token.txt` with your HomeAssistant Longtime Token")
+    exit()
+
 HOMEASSISTANT_ENTITIES = {
     'grid': 'sensor.powerfox_aktuell',
     'battery': 'sensor.albXXXXXXXXXXX_instantaneous_battery_i_o',
@@ -75,8 +85,8 @@ def update_states():
             state = float(state)
             STATES[ent_type] = state
             sum_entities += abs(state)
-        except ValueError as e:
-            print(str(e))
+        except (ValueError, TypeError) as e:
+            print(f"Can't read entity `{ent}` from your HomeAssistant:", str(e))
             STATES[ent_type] = 0
 
 
