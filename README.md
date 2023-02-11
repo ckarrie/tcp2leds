@@ -48,3 +48,5 @@ Possible color values:
 - `p` purple
 - `i` iris
 - `p` orange
+
+Feel free to contribute more color values
