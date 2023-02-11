@@ -98,12 +98,18 @@ if __name__ == "__main__":
     
     led_bat_counter = 0
     led_grid_counter = 0
-    
+    clean_leds_counter = 0
     cnt = 0
     while True:
         if cnt == 0:
             update_states()
-            #clean_leds()
+            clean_leds_counter += 1
+            if clean_leds_counter == 10:
+                # reset the leds every 10th update
+                clean_leds()
+                clean_leds_counter = 0
+                print("clean_leds called")
+
             update_freq_sec = max(sum_entities / 1000, 2)
             print("update_freq_sec", update_freq_sec)
             
