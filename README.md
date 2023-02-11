@@ -1,6 +1,8 @@
 # tcp2leds
 Control your WS2812 led strips throung network
 
+![Alt Text](examples/homeassistant_energy.gif)
+
 # How it works
 - connect your WS2812 led strip to your rapsberry pi (act as server), see [wiring](#wiring-the-server)
 - run `python3 tcp2leds.py` on your rapsberry pi as user `root` (`sudo python3 tcp2leds.py`)
@@ -49,4 +51,4 @@ Possible color values:
 - `i` iris
 - `p` orange
 
-Feel free to contribute more color values
+Feel free to contribute more color values.
