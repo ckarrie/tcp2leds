@@ -1,5 +1,5 @@
 # tcp2leds
-Control your WS2812 led strips throung network
+Control your WS2812 led strips through network
 
 ![homeassistant_energy](examples/homeassistant_energy.gif)
 
