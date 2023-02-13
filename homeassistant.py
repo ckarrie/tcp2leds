@@ -37,7 +37,9 @@ class HomeAssistantSection(Section):
         try:
             state = self._convert_state(state)
         except (ValueError, TypeError) as e:
-            print(f"Can't read entity `{self.entity_id}` from your HomeAssistant:", str(e))
+            if self._show_warnings:
+                print(f"Can't read entity `{self.entity_id}` from your HomeAssistant:", str(e))
+                self._show_warnings = False
             return None
 
         return state
@@ -63,6 +65,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
             self.stage_colors = [stage_colors]
 
         self.running_light_index = 0
+        self._show_warnings = True
 
     def _convert_state(self, v):
         return float(v)
