@@ -3,6 +3,7 @@ import time
 import socket
 import argparse
 import os
+from requests.exceptions import ConnectionError
 
 """
 Run with
@@ -83,7 +84,13 @@ def update_states():
             "content-type": "application/json",
         }
         response = requests.get(url, headers=headers)
-        state = response.json().get("state")
+        try:
+            state = response.json().get("state")
+        except ConnectionError:
+            print(f"[ConnectionError] waiting for {url}")
+            time.sleep(10)
+            return
+        
         try:
             state = float(state)
             STATES[ent_type] = state
@@ -112,6 +119,10 @@ if __name__ == "__main__":
 
             update_freq_sec = max(sum_entities / 1000, 2)
             print("update_freq_sec", update_freq_sec)
+            
+            if sum_entities == 0:
+                sleep(5)
+                continue
             
             # batt
             batt_percent = float(abs(STATES['battery']) / sum_entities) * 100.      # z.B. (2000 / 6000) * 100 = 33,33%
@@ -233,4 +244,4 @@ if __name__ == "__main__":
         msg = ''.join(sun_array)
         msg_b = msg.encode()
         sock.sendall(msg_b)
-        time.sleep(1/update_freq_sec*0.5)
+        time.sleep(min(1/update_freq_sec*0.5, 0.1))
