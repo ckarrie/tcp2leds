@@ -38,6 +38,7 @@ class HomeAssistantSection(Section):
             state = self._convert_state(state)
         except (ValueError, TypeError) as e:
             print(f"Can't read entity `{self.entity_id}` from your HomeAssistant:", str(e))
+            return None
 
         return state
 
