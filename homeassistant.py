@@ -25,8 +25,9 @@ class HomeAssistantSection(Section):
             "Authorization": f"Bearer {self.long_time_token}",
             "content-type": "application/json",
         }
-        response = requests.get(url, headers=headers)
+
         try:
+            response = requests.get(url, headers=headers)
             state = response.json().get("state")
         except requests.ConnectionError:
             print(f"[ConnectionError] waiting for {url}")
@@ -90,7 +91,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
 
         current_value = self.update_state_value()
         if current_value is None:
-            return 
+            return
         current_value_abs = abs(current_value)
         if self.debug:
             print("current_value", current_value)
