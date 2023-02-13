@@ -2,7 +2,6 @@ import datetime
 import time
 
 import requests
-from requests import ConnectionError
 
 from . import Section, LED
 
@@ -29,7 +28,7 @@ class HomeAssistantSection(Section):
         response = requests.get(url, headers=headers)
         try:
             state = response.json().get("state")
-        except ConnectionError:
+        except requests.ConnectionError:
             print(f"[ConnectionError] waiting for {url}")
             time.sleep(10)
             return self.state_value
@@ -90,6 +89,8 @@ class HomeAssistantPowerSection(HomeAssistantSection):
             print("split_stages_value", split_stages_value, "watt")
 
         current_value = self.update_state_value()
+        if current_value is None:
+            return 
         current_value_abs = abs(current_value)
         if self.debug:
             print("current_value", current_value)
