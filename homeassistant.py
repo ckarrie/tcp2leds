@@ -1,5 +1,6 @@
 import datetime
 import time
+from json import JSONDecodeError
 
 import requests
 
@@ -15,6 +16,7 @@ class HomeAssistantSection(Section):
         self.state_value = None
         self.state_update_timedelta = datetime.timedelta(seconds=1)
         self.state_last_updated = datetime.datetime.now()
+        self._show_warnings = True
 
     def _convert_state(self, v):
         return v
@@ -32,6 +34,8 @@ class HomeAssistantSection(Section):
         except requests.ConnectionError:
             print(f"[ConnectionError] waiting for {url}")
             time.sleep(10)
+            return self.state_value
+        except JSONDecodeError:
             return self.state_value
 
         try:
@@ -65,7 +69,6 @@ class HomeAssistantPowerSection(HomeAssistantSection):
             self.stage_colors = [stage_colors]
 
         self.running_light_index = 0
-        self._show_warnings = True
 
     def _convert_state(self, v):
         return float(v)
