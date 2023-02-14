@@ -123,6 +123,7 @@ class LED:
     COLOR_IGNORE = '-'
     COLOR_OFF = '0'
     COLOR_RED = 'r'
+    COLOR_GREEN = 'g'
 
     def __init__(self, index_in_section=0, color=COLOR_IGNORE):
         self.index_in_section = index_in_section
@@ -130,6 +131,13 @@ class LED:
 
     def __repr__(self):
         return f'<LED{self.index_in_section}: {self.color}>'
+
+
+DEFAULT_SOC_COLOR_RANGES = {
+    (0, 19): LED.COLOR_IGNORE,
+    (20, 24): LED.COLOR_RED,
+    (25, 100): LED.COLOR_GREEN
+}
 
 
 def test():

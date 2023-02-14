@@ -4,7 +4,7 @@ from json import JSONDecodeError
 
 import requests
 
-from . import Section, LED
+from . import Section, LED, DEFAULT_SOC_COLOR_RANGES
 
 
 class HomeAssistantSection(Section):
@@ -21,8 +21,10 @@ class HomeAssistantSection(Section):
     def _convert_state(self, v):
         return v
 
-    def _get_current_state(self):
-        url = f"{self.hass_url}/api/states/{self.entity_id}"
+    def _build_hass_url(self, entity_id):
+        return f"{self.hass_url}/api/states/{entity_id}"
+
+    def _get_current_state(self, url, convert_state_func):
         headers = {
             "Authorization": f"Bearer {self.long_time_token}",
             "content-type": "application/json",
@@ -34,32 +36,36 @@ class HomeAssistantSection(Section):
         except requests.ConnectionError:
             print(f"[ConnectionError] waiting for {url}")
             time.sleep(10)
-            return self.state_value
+            return 0
         except JSONDecodeError:
-            return self.state_value
+            return 0
 
         try:
-            state = self._convert_state(state)
+            state = convert_state_func(state)
         except (ValueError, TypeError) as e:
             if self._show_warnings:
-                print(f"Can't read entity `{self.entity_id}` from your HomeAssistant:", str(e))
+                print(f"Can't read from url `{url}` from your HomeAssistant:", str(e))
                 self._show_warnings = False
             return None
 
         return state
 
+    def _update_state(self):
+        url = self._build_hass_url(entity_id=self.entity_id)
+        self.state_value = self._get_current_state(url=url, convert_state_func=self._convert_state)
+        self.state_last_updated = datetime.datetime.now()
+        if self.debug:
+            print("update!")
+
     def update_state_value(self):
         has_old_data = (datetime.datetime.now() - self.state_last_updated) > self.state_update_timedelta
         if has_old_data or self.state_value is None:
-            self.state_value = self._get_current_state()
-            self.state_last_updated = datetime.datetime.now()
-            if self.debug:
-                print("update!")
+            self._update_state()
         return self.state_value
 
 
 class HomeAssistantPowerSection(HomeAssistantSection):
-    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None):
+    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True):
         super().__init__(name, url, long_time_token=long_time_token, entity_id=entity_id)
         self.value_per_led = value_per_led
         self.stage_colors = []
@@ -68,7 +74,8 @@ class HomeAssistantPowerSection(HomeAssistantSection):
         elif isinstance(stage_colors, str) and len(stage_colors) == 1:
             self.stage_colors = [stage_colors]
 
-        self.running_light_index = 0
+        self.running_light = running_light
+        self._running_light_index = 0
 
     def _convert_state(self, v):
         """
@@ -117,10 +124,10 @@ class HomeAssistantPowerSection(HomeAssistantSection):
         running_light_right = current_value > 0
 
         # prepare running light index value
-        if running_light_right and self.running_light_index == usable_leds_in_section - 1:
-            self.running_light_index = 0
-        if not running_light_right and self.running_light_index == 0:
-            self.running_light_index = usable_leds_in_section - 1
+        if running_light_right and self._running_light_index == usable_leds_in_section - 1:
+            self._running_light_index = 0
+        if not running_light_right and self._running_light_index == 0:
+            self._running_light_index = usable_leds_in_section - 1
 
         # run through stages
         for stage_index in range(last_stage_cnt):
@@ -146,27 +153,50 @@ class HomeAssistantPowerSection(HomeAssistantSection):
                         section_led.color = LED.COLOR_OFF
 
         if self.debug and self.name == 'helper_verbrauch_haus':
-            print(f'{self.name}: {self.state_value} W, running_light_right={running_light_right}, rli={self.running_light_index}')
+            print(f'{self.name}: {self.state_value} W, running_light_right={running_light_right}, rli={self._running_light_index}')
 
-        self.leds[self.running_light_index].color = LED.COLOR_OFF
+        if self.running_light:
+            self.leds[self._running_light_index].color = LED.COLOR_OFF
 
         if running_light_right:
-            self.running_light_index += 1
+            self._running_light_index += 1
         else:
-            self.running_light_index -= 1
+            self._running_light_index -= 1
 
         # for led_index, led in enumerate(self.leds):
-        #    if self.running_light_index == led_index:
+        #    if self._running_light_index == led_index:
         #        prev_color = led.color
         #        led.color = LED.COLOR_OFF
         #        if led_index > 0 and running_light_right:
         #            self.leds[led_index - 1].color = prev_color
         #        if led_index
         #    if running_light_right:
-        #        self.running_light_index += 1
+        #        self._running_light_index += 1
         #    else:
-        #        self.running_light_index -= 1
+        #        self._running_light_index -= 1
         #    break
 
         if self.debug:
             print("leds", self.leds)
+
+
+class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
+    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True, soc_entity_id=None, soc_colors=DEFAULT_SOC_COLOR_RANGES):
+        super().__init__(name=name, url=url, long_time_token=long_time_token, entity_id=entity_id, value_per_led=value_per_led, stage_colors=stage_colors, running_light=running_light)
+        self.soc_entity_id = soc_entity_id
+        self.soc_colors = soc_colors
+        self.soc_state = None
+
+    def _convert_soc_state(self, v):
+        return v
+
+    def _update_state(self):
+        super()._update_state()
+        soc_url = self._build_hass_url(entity_id=self.soc_entity_id)
+        self.soc_state = self._get_current_state(url=soc_url, convert_state_func=self._convert_soc_state)
+        print("soc_state", self.soc_state)
+
+    def build_leds(self):
+        super().build_leds()
+        usable_leds = self.usable_leds_in_section
+        print("usable_leds", usable_leds)
