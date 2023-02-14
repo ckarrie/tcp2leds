@@ -188,7 +188,7 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
         self.soc_state = None
 
     def _convert_soc_state(self, v):
-        return v
+        return int(v)
 
     def _update_state(self):
         super()._update_state()
@@ -199,4 +199,10 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
     def build_leds(self):
         super().build_leds()
         usable_leds = self.usable_leds_in_section
-        print("usable_leds", usable_leds)
+        led_soc_index = int(usable_leds * self.soc_state / 100)
+        led_soc = self.leds[led_soc_index]
+        print("led_soc", led_soc)
+        for soc_color_range, soc_color in self.soc_colors.items():
+            min_r, max_r = soc_color_range
+            if min_r <= self.soc_state <= max_r:
+                self.leds[led_soc_index].color = soc_color
