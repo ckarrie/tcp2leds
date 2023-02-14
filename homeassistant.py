@@ -71,7 +71,12 @@ class HomeAssistantPowerSection(HomeAssistantSection):
         self.running_light_index = 0
 
     def _convert_state(self, v):
-        return float(v)
+        """
+        "4440" -> 4400
+        "4470" -> 4500
+        """
+        v = float(v)
+        return round(v / self.value_per_led) * self.value_per_led
 
     def get_stage_color(self, stage_index: int, value=None):
         try:
