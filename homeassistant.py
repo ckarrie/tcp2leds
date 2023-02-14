@@ -194,7 +194,8 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
         super()._update_state()
         soc_url = self._build_hass_url(entity_id=self.soc_entity_id)
         self.soc_state = self._get_current_state(url=soc_url, convert_state_func=self._convert_soc_state)
-        print("soc_state", self.soc_state)
+        if self.debug:
+            print("soc_state", self.soc_state)
 
     def build_leds(self):
         super().build_leds()
@@ -202,7 +203,8 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
             usable_leds = self.usable_leds_in_section
             led_soc_index = int(usable_leds * self.soc_state / 100)
             led_soc = self.leds[led_soc_index]
-            print("led_soc", led_soc)
+            if self.debug:
+                print("led_soc", led_soc)
             for soc_color_range, soc_color in self.soc_colors.items():
                 min_r, max_r = soc_color_range
                 if min_r <= self.soc_state <= max_r:
