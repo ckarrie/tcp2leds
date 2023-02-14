@@ -79,12 +79,12 @@ class LEDProgram:
         msg_b = led_array_msg.encode()
         self._sock_connection.sendall(msg_b)
 
-    def push_loop(self):
+    def push_loop(self, update_sec=0.1):
         clear_after_pushes_counter = 0
         while True:
             try:
                 self.push()
-                time.sleep(0.1)
+                time.sleep(update_sec)
                 if clear_after_pushes_counter == 100:
                     self.clear_leds()
                     clear_after_pushes_counter = 0
