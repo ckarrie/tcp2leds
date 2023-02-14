@@ -188,7 +188,7 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
         self.soc_state = None
 
     def _convert_soc_state(self, v):
-        return int(v)
+        return int(float(v))
 
     def _update_state(self):
         super()._update_state()
