@@ -3,7 +3,7 @@ Control your WS2812 led strips through network
 
 ![homeassistant_energy](examples/homeassistant_energy.gif)
 
-see [homeassistant_energy.py](examples/homeassistant_energy.py)
+see [homeassistant_energy.py](examples/homeassistant_energy.py) and README section [HomeAssistant examples](#homeassistant-examples)
 
 # How it works
 - connect your WS2812 led strip to your rapsberry pi (act as server), see [wiring](#wiring-the-server)
@@ -54,3 +54,59 @@ Possible color values:
 - `p` orange
 
 Feel free to contribute more color values.
+
+
+# HomeAssistant examples
+
+```python3
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import tcp2leds
+import time
+from tcp2leds.homeassistant import HomeAssistantPowerSection, \
+    HomeAssistantPowerSOCSection
+ltt = '<HomeAssistant Long-Time Token>'
+hass_url = 'http://192.168.178.203:8123'
+watt_per_led = 100
+p = tcp2leds.LEDProgram('192.168.178.100', used_leds=140)
+s1 = HomeAssistantPowerSection(
+    'grid',
+    hass_url,
+    ltt,
+    'sensor.powerfox_aktuell',
+    value_per_led=watt_per_led,
+    stage_colors=['b', 'y', 'r'],
+    )
+s2 = HomeAssistantPowerSOCSection(
+    'battery',
+    hass_url,
+    ltt,
+    'sensor.albXXXXXXXX_instantaneous_battery_i_o',
+    value_per_led=watt_per_led,
+    stage_colors=['p', 'i', 'r'],
+    soc_entity_id='sensor.albXXXXXXXX_instantaneous_battery_soc',
+    )
+s3 = HomeAssistantPowerSection(
+    'helper_sum_pv',
+    hass_url,
+    ltt,
+    'sensor.helper_pv_sum_yaml',
+    value_per_led=watt_per_led,
+    stage_colors=['y', 'n', 'r'],
+    )
+s4 = HomeAssistantPowerSection(
+    'helper_verbrauch_haus',
+    hass_url,
+    ltt,
+    'sensor.helper_verbrauch_haus_yaml',
+    value_per_led=watt_per_led,
+    stage_colors=['o', 'a', 'r'],
+    )
+p.add_section(s1)
+p.add_section(s2)
+p.add_section(s3)
+p.add_section(s4)
+p.push_loop(update_sec=0.05)
+
+
+```
