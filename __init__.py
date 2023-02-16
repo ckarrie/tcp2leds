@@ -124,6 +124,8 @@ class LED:
     COLOR_OFF = '0'
     COLOR_RED = 'r'
     COLOR_GREEN = 'g'
+    COLOR_PURPLE = 'p'
+    COLOR_ORANGE = 'n'
 
     def __init__(self, index_in_section=0, color=COLOR_IGNORE):
         self.index_in_section = index_in_section
@@ -135,8 +137,10 @@ class LED:
 
 DEFAULT_SOC_COLOR_RANGES = {
     (0, 19): LED.COLOR_IGNORE,
-    (20, 24): LED.COLOR_RED,
-    (25, 100): LED.COLOR_GREEN
+    (20, 29): LED.COLOR_RED,
+    (30, 49): LED.COLOR_PURPLE,
+    (50, 79): LED.COLOR_ORANGE,
+    (80, 100): LED.COLOR_GREEN
 }
 
 
