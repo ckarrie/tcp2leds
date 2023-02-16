@@ -126,6 +126,7 @@ class LED:
     COLOR_GREEN = 'g'
     COLOR_PURPLE = 'p'
     COLOR_ORANGE = 'n'
+    COLOR_ORANGE_DARK = 'd'
 
     def __init__(self, index_in_section=0, color=COLOR_IGNORE):
         self.index_in_section = index_in_section

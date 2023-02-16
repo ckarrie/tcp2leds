@@ -40,6 +40,7 @@ color_green = Color(0, 255, 0)
 color_blue = Color(0, 0, 255)
 color_yellow = Color(255, 234, 0)
 color_orange = Color(255, 136, 0)
+color_dark_orange = Color(255, 85, 0)
 color_amber = Color(255, 191, 0)
 color_brown = Color(255, 248, 220)
 color_purple = Color(191, 64, 191)
@@ -57,6 +58,7 @@ COLOR_CODES = {
     'p': color_purple,
     'i': color_iris,
     'n': color_orange,
+    'd': color_dark_orange,
 }
 
 
