@@ -202,8 +202,8 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
         if self.soc_state is not None:
             usable_leds = self.usable_leds_in_section
             led_soc_index = int(usable_leds * self.soc_state / 100)
-            if led_soc_index > usable_leds:
-                led_soc_index = usable_leds
+            if led_soc_index > (usable_leds - 1):
+                led_soc_index = usable_leds - 1
             led_soc = self.leds[led_soc_index]
             if self.debug:
                 print("led_soc", led_soc)
