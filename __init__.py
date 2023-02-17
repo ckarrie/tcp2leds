@@ -3,9 +3,11 @@ from __future__ import annotations
 import socket
 import time
 
+from . import const
+
 
 class LEDProgram:
-    def __init__(self, host, port=10000, used_leds=60, led_offset=0, strip_leds=144):
+    def __init__(self, host, port=const.DEFAULT_PORT, used_leds=const.DEFAULT_USED_LEDS, led_offset=const.DEFAULT_LED_OFFSET, strip_leds=const.DEFAULT_LIGHTSTRIP_LEDS):
         """
 
         :param host: IP or hostname of running tcp2leds server
@@ -67,7 +69,7 @@ class LEDProgram:
         if self._sock_connection is None:
             self.connect()
 
-        led_array_msg = '0' * self.strip_leds
+        led_array_msg = f'{const.LEDColor.COLOR_OFF}' * self.strip_leds
         msg_b = led_array_msg.encode()
         self._sock_connection.sendall(msg_b)
 
@@ -79,13 +81,17 @@ class LEDProgram:
         msg_b = led_array_msg.encode()
         self._sock_connection.sendall(msg_b)
 
-    def push_loop(self, update_sec=0.1):
+    def push_loop(
+            self,
+            update_sec: float = const.DEFAULT_PUSH_LOOP_LED_SPEED_SECONDS,
+            clear_after_pushes: int = const.DEFAULT_PUSH_LOOP_CLEAR_LEDS_ITERATION):
+
         clear_after_pushes_counter = 0
         while True:
             try:
                 self.push()
                 time.sleep(update_sec)
-                if clear_after_pushes_counter == 100:
+                if clear_after_pushes_counter == clear_after_pushes:
                     self.clear_leds()
                     clear_after_pushes_counter = 0
                 clear_after_pushes_counter += 1
@@ -94,14 +100,13 @@ class LEDProgram:
 
 
 class Section:
-    def __init__(self, name, width_percentage=100):
+    def __init__(self, name, width_percentage=const.DEFAULT_SECTION_WIDTH_PERCENTAGE):
         self.program: None | LEDProgram = None
         self.name = name
         if width_percentage < 0 or width_percentage > 100:
             raise ValueError(f"width must me lower or equal 100, not `{width_percentage}` (type {type(width_percentage)})")
         self.width_percentage = width_percentage
         self.leds = []
-        self.debug = False
 
     def build_leds(self):
         raise NotImplementedError("Missing build_leds")
@@ -127,6 +132,7 @@ class LED:
     COLOR_PURPLE = 'p'
     COLOR_ORANGE = 'n'
     COLOR_ORANGE_DARK = 'd'
+    COLOR_IRIS = 'i'
 
     def __init__(self, index_in_section=0, color=COLOR_IGNORE):
         self.index_in_section = index_in_section
@@ -139,7 +145,7 @@ class LED:
 DEFAULT_SOC_COLOR_RANGES = {
     (0, 19): LED.COLOR_IGNORE,
     (20, 29): LED.COLOR_RED,
-    (30, 49): LED.COLOR_PURPLE,
+    (30, 49): LED.COLOR_IRIS,
     (50, 79): LED.COLOR_ORANGE,
     (80, 100): LED.COLOR_GREEN
 }

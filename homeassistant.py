@@ -4,7 +4,7 @@ from json import JSONDecodeError
 
 import requests
 
-from . import Section, LED, DEFAULT_SOC_COLOR_RANGES
+from . import Section, LED, DEFAULT_SOC_COLOR_RANGES, const
 
 
 class HomeAssistantSection(Section):
@@ -54,7 +54,7 @@ class HomeAssistantSection(Section):
         url = self._build_hass_url(entity_id=self.entity_id)
         self.state_value = self._get_current_state(url=url, convert_state_func=self._convert_state)
         self.state_last_updated = datetime.datetime.now()
-        if self.debug:
+        if const.DEBUG:
             print("update!")
 
     def update_state_value(self):
@@ -101,23 +101,23 @@ class HomeAssistantPowerSection(HomeAssistantSection):
     def build_leds(self):
         self._pre_build_leds()
         usable_leds_in_section = self.usable_leds_in_section
-        if self.debug:
+        if const.DEBUG:
             print("usable_leds_in_section", usable_leds_in_section)
 
         split_stages_value = self.value_per_led * usable_leds_in_section
-        if self.debug:
+        if const.DEBUG:
             print("split_stages_value", split_stages_value, "watt")
 
         current_value = self.update_state_value()
         if current_value is None:
             return
         current_value_abs = abs(current_value)
-        if self.debug:
+        if const.DEBUG:
             print("current_value", current_value)
 
         last_stage_index = int(current_value_abs / split_stages_value)
         last_stage_cnt = last_stage_index + 1
-        if self.debug:
+        if const.DEBUG:
             print("last_stage_index", last_stage_index)
 
         virtual_led_value = 0
@@ -132,7 +132,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
         # run through stages
         for stage_index in range(last_stage_cnt):
             stage_led_color = self.get_stage_color(stage_index=stage_index)
-            if self.debug:
+            if const.DEBUG:
                 print(f"stage{stage_index} color {stage_led_color}")
 
             for section_index in range(usable_leds_in_section):
@@ -141,7 +141,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
                 virtual_led_value = virtual_led_value + self.value_per_led
                 led_is_on = virtual_led_value <= current_value_abs
 
-                if self.debug:
+                if const.DEBUG:
                     print("  - virtual_led_value", virtual_led_value)
                     print("  - led_is_on", led_is_on)
 
@@ -152,7 +152,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
                     if stage_index == 0:
                         section_led.color = LED.COLOR_OFF
 
-        if self.debug and self.name == 'helper_verbrauch_haus':
+        if const.DEBUG and self.name == 'helper_verbrauch_haus':
             print(f'{self.name}: {self.state_value} W, running_light_right={running_light_right}, rli={self._running_light_index}')
 
         if self.running_light:
@@ -176,7 +176,7 @@ class HomeAssistantPowerSection(HomeAssistantSection):
         #        self._running_light_index -= 1
         #    break
 
-        if self.debug:
+        if const.DEBUG:
             print("leds", self.leds)
 
 
@@ -187,14 +187,15 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
         self.soc_colors = soc_colors
         self.soc_state = None
 
-    def _convert_soc_state(self, v):
+    @staticmethod
+    def _convert_soc_state(v):
         return int(float(v))
 
     def _update_state(self):
         super()._update_state()
         soc_url = self._build_hass_url(entity_id=self.soc_entity_id)
         self.soc_state = self._get_current_state(url=soc_url, convert_state_func=self._convert_soc_state)
-        if self.debug:
+        if const.DEBUG:
             print("soc_state", self.soc_state)
 
     def build_leds(self):
@@ -205,7 +206,7 @@ class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
             if led_soc_index > (usable_leds - 1):
                 led_soc_index = usable_leds - 1
             led_soc = self.leds[led_soc_index]
-            if self.debug:
+            if const.DEBUG:
                 print("led_soc", led_soc)
             for soc_color_range, soc_color in self.soc_colors.items():
                 min_r, max_r = soc_color_range
