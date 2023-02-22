@@ -65,8 +65,8 @@ class HomeAssistantSection(Section):
 
 
 class HomeAssistantPowerSection(HomeAssistantSection):
-    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True):
-        super().__init__(name, url, long_time_token=long_time_token, entity_id=entity_id)
+    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True, update_seconds=const.DEFAULT_UPDATE_SECONDS):
+        super().__init__(name, url, long_time_token=long_time_token, entity_id=entity_id, update_seconds=update_seconds)
         self.value_per_led = value_per_led
         self.stage_colors = []
         if isinstance(stage_colors, list):
@@ -181,8 +181,8 @@ class HomeAssistantPowerSection(HomeAssistantSection):
 
 
 class HomeAssistantPowerSOCSection(HomeAssistantPowerSection):
-    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True, soc_entity_id=None, soc_colors=DEFAULT_SOC_COLOR_RANGES):
-        super().__init__(name=name, url=url, long_time_token=long_time_token, entity_id=entity_id, value_per_led=value_per_led, stage_colors=stage_colors, running_light=running_light)
+    def __init__(self, name, url, long_time_token=None, entity_id=None, value_per_led=None, stage_colors=None, running_light=True, soc_entity_id=None, soc_colors=DEFAULT_SOC_COLOR_RANGES, update_seconds=const.DEFAULT_UPDATE_SECONDS):
+        super().__init__(name=name, url=url, long_time_token=long_time_token, entity_id=entity_id, value_per_led=value_per_led, stage_colors=stage_colors, running_light=running_light, update_seconds=update_seconds)
         self.soc_entity_id = soc_entity_id
         self.soc_colors = soc_colors
         self.soc_state = None
