@@ -25,6 +25,37 @@ see [homeassistant_energy.py](examples/homeassistant_energy.py) and README secti
 - connect the longer `+`, `-` and `data` wires of your led strip with your raspberry pi
 - power up raspberry pi with USB-C
 
+# Install server libraries
+
+```
+sudo apt-get update
+sudo apt-get install gcc make build-essential python-dev git scons swig
+sudo nano /etc/modprobe.d/raspi-blacklist.conf
+```
+Add line:
+```
+blacklist snd_bcm2835
+```
+
+```
+sudo nano /boot/config.txt
+```
+Add comment/remove:
+```
+#dtparam=audio=on
+```
+Reboot:
+```
+sudo reboot
+```
+Install [rpi_ws281x](https://github.com/jgarff/rpi_ws281x)
+```
+cd ~/src/
+git clone https://github.com/jgarff/rpi_ws281x
+cd rpi_ws281x/
+sudo scons
+```
+
 # Protocol
 Each char represents a color of a led:
 
