@@ -8,13 +8,13 @@ from . import Section, LED, DEFAULT_SOC_COLOR_RANGES, const
 
 
 class HomeAssistantSection(Section):
-    def __init__(self, name, url, long_time_token=None, entity_id=None):
+    def __init__(self, name, url, long_time_token=None, entity_id=None, update_seconds=const.DEFAULT_UPDATE_SECONDS):
         super().__init__(name=name, width_percentage=100)
         self.entity_id = entity_id
         self.hass_url = url
         self.long_time_token = long_time_token
         self.state_value = None
-        self.state_update_timedelta = datetime.timedelta(seconds=1)
+        self.state_update_timedelta = datetime.timedelta(seconds=update_seconds)
         self.state_last_updated = datetime.datetime.now()
         self._show_warnings = True
 

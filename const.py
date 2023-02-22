@@ -7,7 +7,7 @@ DEFAULT_LIGHTSTRIP_LEDS = 144
 DEFAULT_PUSH_LOOP_CLEAR_LEDS_ITERATION = 100  # clear every x round in LEDProgram.push_loop
 DEFAULT_PUSH_LOOP_LED_SPEED_SECONDS = 0.1
 DEFAULT_SECTION_WIDTH_PERCENTAGE = 100  # 100% of the assigned leds will be used for a section
-
+DEFAULT_UPDATE_SECONDS = 1
 
 COLOR_MAPPING_HEX = {
     'off': (0, 0, 0),

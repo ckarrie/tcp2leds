@@ -7,7 +7,14 @@ from . import const
 
 
 class LEDProgram:
-    def __init__(self, host, port=const.DEFAULT_PORT, used_leds=const.DEFAULT_USED_LEDS, led_offset=const.DEFAULT_LED_OFFSET, strip_leds=const.DEFAULT_LIGHTSTRIP_LEDS):
+    def __init__(
+            self,
+            host,
+            port=const.DEFAULT_PORT,
+            used_leds=const.DEFAULT_USED_LEDS,
+            led_offset=const.DEFAULT_LED_OFFSET,
+            strip_leds=const.DEFAULT_LIGHTSTRIP_LEDS
+    ):
         """
 
         :param host: IP or hostname of running tcp2leds server
@@ -84,7 +91,8 @@ class LEDProgram:
     def push_loop(
             self,
             update_sec: float = const.DEFAULT_PUSH_LOOP_LED_SPEED_SECONDS,
-            clear_after_pushes: int = const.DEFAULT_PUSH_LOOP_CLEAR_LEDS_ITERATION):
+            clear_after_pushes: int = const.DEFAULT_PUSH_LOOP_CLEAR_LEDS_ITERATION
+    ):
 
         clear_after_pushes_counter = 0
         while True:
