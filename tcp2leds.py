@@ -39,12 +39,21 @@ color_red = Color(255, 0, 0)
 color_green = Color(0, 255, 0)
 color_blue = Color(0, 0, 255)
 color_yellow = Color(255, 234, 0)
+color_light_yellow = Color(255, 250, 107)
 color_orange = Color(255, 136, 0)
 color_dark_orange = Color(255, 85, 0)
 color_amber = Color(255, 191, 0)
 color_brown = Color(255, 248, 220)
 color_purple = Color(191, 64, 191)
+color_purple2 = Color(191, 64, 191)
 color_iris = Color(93, 63, 211)
+color_dark_blue = Color(0, 0, 160)
+color_light_blue = Color(40, 129, 252)
+color_dark_lila = Color(140, 1, 136)
+color_lila = Color(250, 0, 243)
+color_light_lila = Color(250, 107, 246)
+color_dark_purple = Color(50, 0, 125)
+color_light_purple = Color(163, 105, 250)
 
 COLOR_CODES = {
     '-': None,
@@ -59,6 +68,16 @@ COLOR_CODES = {
     'i': color_iris,
     'n': color_orange,
     'd': color_dark_orange,
+    'l': color_dark_blue,
+    'u': color_light_blue,
+    'q': color_dark_lila,
+    'w': color_lila,
+    'e': color_light_lila,
+    't': color_light_yellow,
+    'z': color_dark_purple,
+    's': color_purple2,
+    'f': color_light_purple,
+
 }
 
 
